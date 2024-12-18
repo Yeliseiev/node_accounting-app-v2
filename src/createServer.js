@@ -2,7 +2,8 @@
 
 const express = require('express');
 const cors = require('cors');
-const { router: userRouter, resetUsers } = require('./routers/user.router.js');
+const userRouter = require('./routers/user.route.js');
+const { resetUsers } = require('./services/user.service.js');
 
 function createServer() {
   resetUsers();

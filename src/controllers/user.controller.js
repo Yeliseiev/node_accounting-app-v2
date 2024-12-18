@@ -1,70 +1,58 @@
-const express = require('express');
+const userService = require('../services/user.service.js');
 
-const router = express.Router();
+const get = (req, res) => {
+  const users = userService.getAll();
 
-let users = [];
-
-const resetUsers = () => {
-  users = [];
-};
-
-router.get('/', (req, res) => {
   res.setHeader('Content-type', 'application/json');
   res.send(users);
-});
+};
 
-router.get('/:id', (req, res) => {
+const getOne = (req, res) => {
   const { id } = req.params;
 
   if (isNaN(+id)) {
     return res.status(400).send({ error: 'Invalid request params.' });
   }
 
-  const foundUser = users.find((user) => user.id === +id) || null;
+  const foundUser = userService.getById(id);
 
   if (!foundUser) {
     return res.status(404).send({ error: 'User not found.' });
   }
 
   res.send(foundUser);
-});
+};
 
-router.post('/', express.json(), (req, res) => {
+const add = (req, res) => {
   const { name } = req.body;
 
   if (typeof name !== 'string' || !name.trim()) {
     return res.status(400).send({ error: 'Invalid request params.' });
   }
 
-  const newId = Math.max(0, ...users.map((user) => user.id)) + 1;
-  const newUser = {
-    id: newId,
-    name,
-  };
-
-  users.push(newUser);
+  const newUser = userService.create(name);
 
   res.status(201).send(newUser);
-});
+};
 
-router.delete('/:id', (req, res) => {
+const remove = (req, res) => {
   const { id } = req.params;
 
   if (isNaN(+id)) {
     return res.status(400).send({ error: 'Invalid request params.' });
   }
 
-  const userExist = users.some((user) => user.id === +id);
+  const foundUser = userService.getById(id);
 
-  if (!userExist) {
+  if (!foundUser) {
     return res.status(404).send({ error: 'User not found.' });
   }
 
-  users = users.filter((user) => user.id !== +id);
+  userService.remove(id);
   res.send(204);
-});
+};
 
-router.patch('/:id', express.json(), (req, res) => {
+const update = (req, res) => {
   const { id } = req.params;
   const { name } = req.body;
 
@@ -72,15 +60,21 @@ router.patch('/:id', express.json(), (req, res) => {
     return res.status(400).send({ error: 'Invalid request params.' });
   }
 
-  const foundUser = users.find((user) => user.id === +id) || null;
+  const foundUser = userService.getById(id);
 
   if (!foundUser) {
     return res.status(404).send({ error: 'User not found.' });
   }
 
-  Object.assign(foundUser, { name });
+  const updatedUser = userService.update({ id, name });
 
-  res.send(foundUser);
-});
+  res.send(updatedUser);
+};
 
-module.exports = { router, resetUsers };
+module.exports = {
+  get,
+  getOne,
+  add,
+  remove,
+  update,
+};
