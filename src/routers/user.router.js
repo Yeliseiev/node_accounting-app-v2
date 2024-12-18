@@ -25,4 +25,20 @@ router.get('/:id', (req, res) => {
   res.send(foundUser);
 });
 
+router.post('/', express.json(), (req, res) => {
+  const { name } = req.body;
+
+  if (typeof name !== 'string' || !name.trim()) {
+    return res.status(400).send({ error: 'Invalid request params' });
+  }
+
+  const newId = Math.max(0, ...users.map((user) => user.id)) + 1;
+  const newUser = {
+    id: newId,
+    name,
+  };
+
+  res.status(201).send(newUser);
+});
+
 module.exports = router;
