@@ -3,11 +3,9 @@
 const express = require('express');
 const cors = require('cors');
 const usersRouter = require('./routers/user.route.js');
-const {
-  router: expensesRouter,
-  resetExpenses,
-} = require('./routers/expense.route.js');
+const expensesRouter = require('./routers/expense.route.js');
 const { resetUsers } = require('./services/user.service.js');
+const { resetExpenses } = require('./services/expense.service.js');
 
 function createServer() {
   resetUsers();
