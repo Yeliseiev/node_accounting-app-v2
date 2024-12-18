@@ -2,9 +2,11 @@
 
 const express = require('express');
 const cors = require('cors');
-const userRouter = require('./routers/user.router.js');
+const { router: userRouter, resetUsers } = require('./routers/user.router.js');
 
 function createServer() {
+  resetUsers();
+
   const app = express();
 
   app.use(cors());
