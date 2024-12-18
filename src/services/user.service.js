@@ -1,3 +1,5 @@
+const { getNewId } = require('../utils/getNewId.js');
+
 let users = [];
 
 const resetUsers = () => {
@@ -13,9 +15,8 @@ const getById = (id) => {
 };
 
 const create = (name) => {
-  const newId = Math.max(0, ...users.map((user) => user.id)) + 1;
   const newUser = {
-    id: newId,
+    id: getNewId(users),
     name,
   };
 
