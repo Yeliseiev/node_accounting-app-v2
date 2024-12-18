@@ -70,6 +70,44 @@ router.post('/', express.json(), (req, res) => {
   res.status(201).send(newExpense);
 });
 
+router.delete('/:id', (req, res) => {
+  const { id } = req.params;
+
+  if (isNaN(+id)) {
+    return res.status(400).send({ error: 'Invalid request params.' });
+  }
+
+  const foundExpense = expenses.find((exp) => exp.id === +id) || null;
+
+  if (!foundExpense) {
+    return res.status(404).send({ error: 'Expense not found.' });
+  }
+
+  expenses = expenses.filter((exp) => exp.id !== +id);
+
+  res.sendStatus(204);
+});
+
+router.patch('/:id', express.json(), (req, res) => {
+  const { id } = req.params;
+
+  if (isNaN(+id)) {
+    return res.status(400).send({ error: 'Invalid request params' });
+  }
+
+  const foundExpense = expenses.find((exp) => exp.id === +id);
+
+  if (!foundExpense) {
+    return res.status(404).send({ error: 'Expense not found.' });
+  }
+
+  const data = req.body;
+
+  Object.assign(foundExpense, data);
+
+  res.send(foundExpense);
+});
+
 module.exports = {
   router,
   resetExpenses,
